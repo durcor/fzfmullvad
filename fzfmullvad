@@ -10,14 +10,18 @@ country_code=$(\
     sed 's|)||'
 )
 
+[ -z "$country_code" ] && echo "No country specified" && exit 1
+
 server_code=$(\
     mullvad relay list |
     awk "/\($country_code\)/,/^$/" |
-    grep '@' |
+    awk -F'@' '/@/{print $1}' |
     fzf |
     awk -F'(' '{print $2}' |
     awk -F')' '{print $1}'
 )
+
+[ -z "$server_code" ] && echo "No server specified" && exit 1
 
 mullvad relay set location \
     "$country_code" \
