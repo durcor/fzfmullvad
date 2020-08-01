@@ -1,0 +1,24 @@
+#!/bin/sh
+
+country_code=$(\
+    mullvad relay list |
+    grep -v '-' |
+    grep -v '@' | 
+    sed '/^\s*$/d' |
+    fzf |
+    awk -F'(' '{print $2}' |
+    sed 's|)||'
+)
+
+server_code=$(\
+    mullvad relay list |
+    awk "/\($country_code\)/,/^$/" |
+    grep '@' |
+    fzf |
+    awk -F'(' '{print $2}' |
+    awk -F')' '{print $1}'
+)
+
+mullvad relay set location \
+    "$country_code" \
+    "$server_code"
