@@ -25,7 +25,7 @@ main(){
         awk -F')' '{print $1}'
     )
 
-    [ -z "$server_code" ] && fuzzy
+    [ -z "$server_code" ] && main
 
     mullvad relay set location \
         "$country_code" \
