@@ -3,7 +3,7 @@
 country_code=$(\
     mullvad relay list |
     grep -v '-' |
-    grep -v '@' | 
+    grep -v '@' |
     sed '/^\s*$/d' |
     fzf |
     awk -F'(' '{print $2}' |
