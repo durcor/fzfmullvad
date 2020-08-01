@@ -1,28 +1,35 @@
 #!/bin/sh
 
-country_code=$(\
-    mullvad relay list |
-    grep -v '-' |
-    grep -v '@' |
-    sed '/^\s*$/d' |
-    fzf |
-    awk -F'(' '{print $2}' |
-    sed 's|)||'
-)
+# TODO: 
+#      - Add notifications
 
-[ -z "$country_code" ] && echo "No country specified" && exit 1
+main(){
+    country_code=$(\
+        mullvad relay list |
+        grep -v '-' |
+        grep -v '@' |
+        sed '/^\s*$/d' |
+        fzf |
+        awk -F'(' '{print $2}' |
+        sed 's|)||'
+    )
 
-server_code=$(\
-    mullvad relay list |
-    awk "/\($country_code\)/,/^$/" |
-    awk -F'@' '/@/{print $1}' |
-    fzf |
-    awk -F'(' '{print $2}' |
-    awk -F')' '{print $1}'
-)
+    [ -z "$country_code" ] && echo "No country specified" && exit 1
 
-[ -z "$server_code" ] && echo "No server specified" && exit 1
+    server_code=$(\
+        mullvad relay list |
+        awk "/\($country_code\)/,/^$/" |
+        awk -F'@' '/@/{print $1}' |
+        fzf |
+        awk -F'(' '{print $2}' |
+        awk -F')' '{print $1}'
+    )
 
-mullvad relay set location \
-    "$country_code" \
-    "$server_code"
+    [ -z "$server_code" ] && fuzzy
+
+    mullvad relay set location \
+        "$country_code" \
+        "$server_code"
+}
+
+main
