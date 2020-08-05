@@ -56,3 +56,19 @@ main(){
 }
 
 main
+
+mullvad status | grep -q Disconnected && mullvad connect
+
+# Prevent timeout
+sleep 0.1
+
+while mullvad status | grep -q 'Connecting\|Disconnecting\|Disconnected'; do
+    notify-send -i "${XDG_DATA_HOME:-$HOME/.local/share}/fzfmullvad/mullvad.png" \
+        -h string:x-canonical-private-synchronous:fzfmullvad \
+        "$(mullvad status -l)"
+    sleep 1
+done
+
+notify-send -i "${XDG_DATA_HOME:-$HOME/.local/share}/fzfmullvad/mullvad.png" \
+    -h string:x-canonical-private-synchronous:fzfmullvad \
+    "$(mullvad status -l)"
