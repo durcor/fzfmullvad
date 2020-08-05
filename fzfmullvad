@@ -39,7 +39,7 @@ main(){
 
     [ -z "$country_code" ] && echo "No country specified" && exit 130
 
-    server_code=$(\
+    city_code=$(
         mullvad relay list |
         awk "/\($country_code\)/,/^$/" |
         awk -F'@' '/@/{print $1}' |
@@ -48,11 +48,11 @@ main(){
         awk -F')' '{print $1}'
     )
 
-    [ -z "$server_code" ] && main
+    [ -z "$city_code" ] && main
 
     mullvad relay set location \
         "$country_code" \
-        "$server_code"
+        "$city_code"
 }
 
 main
