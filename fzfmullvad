@@ -1,4 +1,9 @@
 #!/bin/sh
+# TODO:
+#       - Allow the ability to specify a specific server within the specified city code
+#
+#       - Provide a general menu for choosing between different
+#           - Allow the ability to switch between wireguard and openvpn
 
 # TODO: 
 #      - Add notifications
