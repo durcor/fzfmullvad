@@ -37,7 +37,7 @@ main(){
         sed 's|)||'
     )
 
-    [ -z "$country_code" ] && echo "No country specified" && exit 1
+    [ -z "$country_code" ] && echo "No country specified" && exit 130
 
     server_code=$(\
         mullvad relay list |
