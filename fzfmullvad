@@ -5,16 +5,34 @@
 #       - Provide a general menu for choosing between different
 #           - Allow the ability to switch between wireguard and openvpn
 
-# TODO: 
-#      - Add notifications
+FZFMULLVAD_RUNTIME_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/fzfmullvad"
+
+if command -v highlight >/dev/null; then
+    markup_command="highlight -O ansi --syntax yaml"
+elif command -v pygmentize >/dev/null; then
+    markup_command="pygmentize -f terminal -l yaml"
+else
+    markup_command="more"
+fi
+
+if [ -e "$FZFMULLVAD_RUNTIME_DIR/lastupdate" ];then
+    if [ "$(date +%x)" != "$(cat "$FZFMULLVAD_RUNTIME_DIR/lastupdate")" ]; then
+        mullvad relay update
+        date +%x > "$FZFMULLVAD_RUNTIME_DIR/lastupdate"
+    fi
+else
+    mullvad relay update
+    date +%x > "$FZFMULLVAD_RUNTIME_DIR/lastupdate"
+fi
 
 main(){
-    country_code=$(\
+    country_code=$(
         mullvad relay list |
         grep -v '-' |
         grep -v '@' |
         sed '/^\s*$/d' |
-        fzf |
+        fzf --preview="mullvad status -l | $markup_command" |
+        # fzf --preview="mullvad relay list | awk "/$(echo {} | tr ' ' '\n' | tail -1)/"" |
         awk -F'(' '{print $2}' |
         sed 's|)||'
     )
